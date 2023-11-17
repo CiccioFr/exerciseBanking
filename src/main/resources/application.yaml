@@ -1,1 +1,19 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: exercise-banking
+#  jackson:
+#    serialization:
+#      indent-output: true
+
+fabrick:
+  api:
+    base-url: https://sandbox.platfr.io
+    # base-url: https://sandbox.fabrick.com   # Alternativo
+    uri: /api/gbs/banking/v4.0/accounts/
+    auth-schema: S2S
+    api-key: FXOVVXXHVCPVPBZXIJOBGUGSKHDNFRRQJP
+    id-key: 3202  # per uso interno, non utile al fine del test
+    account-id: 14537780
 
