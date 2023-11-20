@@ -1,48 +1,80 @@
 package it.inoma.francescoRibatti.exerciseBanking.service;
 
-import it.inoma.francescoRibatti.exerciseBanking.payload.request.TransferRequest;
-import it.inoma.francescoRibatti.exerciseBanking.payload.response.SendboxResponse;
+import it.inoma.francescoRibatti.exerciseBanking.payload.response.BalanceResponse;
+import it.inoma.francescoRibatti.exerciseBanking.payload.response.InfoContoResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
 @Service
-public class FabrickService {
+public class FabrickApiService {
     @Value("${fabrick.api.base-url}")
     private String fabrickBaseUrl;
+
+    @Value("${fabrick.api.uri}")
+    private String uri;
 
     @Value("${fabrick.api.auth-schema}")
     private String authSchema;
 
+    // per HttpHeaders
     @Value("${fabrick.api.api-key}")
     private String apiKey;
 
     @Value("${fabrick.api.account-id}")
     private Long accountId;
 
-
     // TODO Implementare i metodi per chiamare le API di Fabrick
-    // GET  https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/14537780/balance
-    public ResponseEntity<> getBalance() {
-        // Implementa la chiamata API per ottenere il saldo
-        // RestTemplate o Feign possono essere utilizzati qui
-        // Ritorna la risposta della chiamata API
-        String uri = "http://localhost:8090/comment/backup";
+
+    public InfoContoResponse getInfoConto() {
+        String urlApiInfoConto = fabrickBaseUrl + uri + accountId;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Auth-Schema", authSchema);
+        headers.set("Api-Key", apiKey);
+
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<List<SendboxResponse>> response = restTemplate.exchange(
-                uri,
+
+        ResponseEntity<InfoContoResponse> infoResponse = restTemplate.exchange(
+                urlApiInfoConto,
                 HttpMethod.GET,
-                new HttpEntity<>(SendboxResponse.class),
-                new ParameterizedTypeReference<List<SendboxResponse>>(){}
+                new HttpEntity<>(headers),
+//                new HttpEntity<>(InfoContoResponse.class),
+                // tipo di dati atteso per la risposta
+                InfoContoResponse.class
+//                new ParameterizedTypeReference<InfoContoResponse>() { }
         );
-        return response.getBody();
+
+        InfoContoResponse info = infoResponse.getBody();
+        return info;
     }
+
+    /**
+     * Recupero del saldo del CC
+     *
+     * @return risposta della chiamata API
+     */
+    public BalanceResponse getBalance() {
+        String urlApiBalance = fabrickBaseUrl + uri + accountId + "/balance";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Auth-Schema", authSchema);
+        headers.set("Api-Key", apiKey);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        ResponseEntity<BalanceResponse> balanceResponse = restTemplate.exchange(
+                urlApiBalance,
+                HttpMethod.GET,
+                new HttpEntity<>(headers),
+                BalanceResponse.class
+        );
+
+        return balanceResponse.getBody();
+    }
+
+    //  -------------------- //
 
     // GET  https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts
     public String getTransactions() {
@@ -51,8 +83,9 @@ public class FabrickService {
     }
 
     // POST  https://sandbox.platfr.io/api/gbs/banking/v4.0/accounts/{accountId}/payments/money-transfers
-    public String performTransfer(TransferRequest transferRequest) {
-        // Implementa la chiamata API per eseguire un bonifico
-        return null;
-    }
+//    public String performTransfer(TransferRequest transferRequest) {
+//        // Implementa la chiamata API per eseguire un bonifico
+//        return null;
+//    }
+
 }
