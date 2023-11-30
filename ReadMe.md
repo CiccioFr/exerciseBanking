@@ -45,7 +45,7 @@ Il codice sorgente segue una struttura modulare e pulita. Le classi principali i
 
 ## Test Automatizzati:
 
-L'applicazione include test automatizzati per garantire la robustezza del codice. Sono presenti test per le diverse funzionalità, inclusi test di integrazione per gli endpoint REST.
+L'applicazione includerà test automatizzati ...
 
 ## Gestione degli Errori:
 
